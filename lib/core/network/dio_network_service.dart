@@ -8,13 +8,27 @@ import 'model/either.dart';
 import 'model/response.dart' as response;
 import 'network_service.dart';
 
+/// DioNetworkService
+///
+/// This class handles all API calls using the Dio package.
+///
+/// What is Dio?
+/// - A powerful HTTP client for Dart/Flutter.
+/// - It supports interceptors, global configuration, FormData, etc.
+///
+/// What this class does:
+/// 1. Sets up Dio with base URL and headers.
+/// 2. Adds logging (only in Debug mode) to see API requests/responses in console.
+/// 3. Provides methods for GET, POST, PUT, DELETE.
+/// 4. Handles errors globally using ExceptionHandlerMixin.
 class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
   late final Dio _dio;
 
   DioNetworkService() {
     _dio = Dio();
-    // this throws error while running test
     _dio.options = dioBaseOptions;
+
+    // Add Logger only in Debug mode (so users don't see logs in Prod)
     if (kDebugMode) {
       _dio.interceptors.add(
         PrettyDioLogger(
@@ -22,15 +36,14 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
           requestHeader: true,
           requestBody: true,
           responseBody: true,
-          responseHeader: false,
           error: true,
           showProcessingTime: true,
-          showCUrl: true,
           canShowLog: kDebugMode,
         ),
       );
     }
 
+    // Interceptor to handle responses globally if needed
     _dio.interceptors.add(
       InterceptorsWrapper(
         onResponse: (response, handler) {
@@ -40,6 +53,7 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
     );
   }
 
+  /// Default configurations (Base URL, Headers)
   BaseOptions get dioBaseOptions =>
       BaseOptions(baseUrl: baseUrl, headers: headers);
 
@@ -48,10 +62,11 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
 
   @override
   Map<String, Object> get headers => {
-    'accept': 'application/json',
-    'content-type': 'application/json',
-  };
+        'accept': 'application/json',
+        'content-type': 'application/json',
+      };
 
+  /// Update headers (e.g., adding Auth Token after login)
   @override
   Map<String, dynamic>? updateHeader(Map<String, dynamic> data) {
     Map<String, dynamic> header = {...data, ...headers};
@@ -59,11 +74,14 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
     return header;
   }
 
+  // --- HTTP Methods ---
+
   @override
   Future<Either<AppException, response.Response>> post(
     String endpoint, {
     Map<String, dynamic>? data,
   }) async {
+    // handleException wraps the call to catch errors automatically
     Future<Either<AppException, response.Response>> res = handleException(
       () => _dio.post(endpoint, data: data),
       endpoint: endpoint,
@@ -107,6 +125,7 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
     return res;
   }
 
+  /// Upload files (images, documents)
   Future<Either<AppException, response.Response>> uploadFile(
     String endpoint,
     FormData formData,

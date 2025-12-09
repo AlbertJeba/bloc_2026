@@ -8,6 +8,7 @@ import 'package:bloc_2026/core/utils/configuration.dart';
 import 'package:bloc_2026/features/login/domain/usecases/login_usecase.dart';
 import 'package:bloc_2026/features/login/presentation/cubit/login_cubit.dart';
 import 'package:bloc_2026/features/login/presentation/cubit/login_state.dart';
+import 'package:bloc_2026/shared/config/dimens.dart';
 import 'package:bloc_2026/shared/theme/app_colors.dart';
 import 'package:bloc_2026/shared/theme/text_styles.dart';
 import 'package:bloc_2026/shared/widgets/custom_text_input.dart';
@@ -17,6 +18,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:go_router/go_router.dart';
 
+/// Login Screen - Where users enter their username and password to sign in.
+///
+/// What it does:
+/// 1. Shows username and password input fields
+/// 2. Validates the inputs (checks if empty)
+/// 3. Sends login request to the API
+/// 4. If successful -> Goes to Dashboard
+/// 5. If failed -> Shows error message
+///
+/// This screen uses BLoC pattern (LoginCubit) to manage the login state.
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -25,8 +36,10 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  // The cubit that handles all login logic (validation, API calls, etc.)
   late LoginCubit _loginCubit;
 
+  // Controllers to get text from input fields
   final usernameTextController = TextEditingController();
   final passwordTextController = TextEditingController();
 
@@ -36,6 +49,8 @@ class _LoginState extends State<Login> {
     _initializeCubit();
   }
 
+  /// Creates the LoginCubit with its required dependencies.
+  /// We use GetIt (injector) to get the LoginUseCases.
   void _initializeCubit() {
     final loginUseCases = injector<LoginUseCases>();
     _loginCubit = LoginCubit(loginUseCases);
@@ -44,19 +59,27 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
+      // Provide the cubit to all widgets below
       create: (context) => _loginCubit,
       child: Scaffold(
         backgroundColor: AppColors.appBackGround,
         body: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: Dimens.standard_24),
+
+              // BlocConsumer = Listen to state changes + Build UI based on state
+              // - listener: Runs code when state changes (side effects like navigation)
+              // - builder: Builds the UI based on current state
               child: BlocConsumer<LoginCubit, LoginState>(
                 listener: (BuildContext context, LoginState state) {
+                  // When login is successful, go to dashboard
                   if (state.isSuccess && state.loginData != null) {
                     UserPreferences.instance.setUserRole(UserRole.customer);
                     context.go(RoutesName.homePage);
-                  } else if (state.isFailure && state.message.isNotEmpty) {
+                  }
+                  // When login fails, show error toast
+                  else if (state.isFailure && state.message.isNotEmpty) {
                     _showErrorSnackBar(context, state.message);
                     _loginCubit.resetError();
                   }
@@ -65,23 +88,27 @@ class _LoginState extends State<Login> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 60),
+                      const SizedBox(height: Dimens.standard_60),
+
+                      // Lock icon at the top
                       Center(
                         child: Container(
-                          width: 80,
-                          height: 80,
+                          width: Dimens.standard_80,
+                          height: Dimens.standard_80,
                           decoration: BoxDecoration(
-                            color: AppColors.colorPrimary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(20),
+                            color: AppColors.colorPrimary.withValues(alpha: Dimens.decimal_1),
+                            borderRadius: BorderRadius.circular(Dimens.standard_20),
                           ),
                           child: const Icon(
                             Icons.lock_outline_rounded,
-                            size: 40,
+                            size: Dimens.standard_40,
                             color: AppColors.colorPrimary,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: Dimens.standard_32),
+
+                      // Welcome text
                       Center(
                         child: Text(
                           "Welcome Back!",
@@ -90,7 +117,9 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: Dimens.standard_8),
+
+                      // Subtitle
                       Center(
                         child: Text(
                           "Sign in to continue",
@@ -99,40 +128,53 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 48),
+                      const SizedBox(height: Dimens.standard_48),
+
+                      // Username input field
                       CustomTextInput(
                         textEditingController: usernameTextController,
                         hintText: "Enter your username",
-                        title: "USERNAME".tr,
+                        title: "USERNAME".tr, // .tr gets the translated text
                         svgIconPath: AssetPath.emailIcon,
                         inputType: TextInputType.text,
                         onChange: (value) {
+                          // Validate as user types
                           context.read<LoginCubit>().validateUsername(value);
                         },
                       ),
+
+                      // Show error if username is invalid
                       if (state.usernameError.isNotEmpty)
                         _buildFieldValidation(state.usernameError),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: Dimens.standard_8),
+
+                      // Password input field
                       CustomTextInput(
                         textEditingController: passwordTextController,
                         hintText: "Enter your password",
                         title: "PASSWORD".tr,
                         svgIconPath: AssetPath.eyeOpenIcon,
-                        isPassword: true,
+                        isPassword: true, // This hides the text
                         onChange: (value) {
                           context.read<LoginCubit>().validatePassword(value);
                         },
                       ),
+
+                      // Show error if password is invalid
                       if (state.passwordError.isNotEmpty)
                         _buildFieldValidation(state.passwordError),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: Dimens.standard_32),
+
+                      // Login button
                       SizedBox(
                         width: double.infinity,
-                        height: 56,
+                        height: Dimens.standard_56,
                         child: ElevatedButton(
+                          // Disable button while loading
                           onPressed: state.isLoading
                               ? null
                               : () {
+                                  // Validate and login
                                   context.read<LoginCubit>().validate(
                                     usernameTextController.text.trim(),
                                     passwordTextController.text,
@@ -141,15 +183,16 @@ class _LoginState extends State<Login> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.colorPrimary,
                             foregroundColor: AppColors.colorWhite,
-                            elevation: 0,
+                            elevation: Dimens.standard_0,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(Dimens.standard_16),
                             ),
                           ),
+                          // Show loading spinner or "Login" text
                           child: state.isLoading
                               ? const SizedBox(
-                                  height: 24,
-                                  width: 24,
+                                  height: Dimens.standard_24,
+                                  width: Dimens.standard_24,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2.5,
                                     color: AppColors.colorWhite,
@@ -163,14 +206,16 @@ class _LoginState extends State<Login> {
                                 ),
                         ),
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: Dimens.standard_32),
+
+                      // Info box with test credentials (for demo purposes)
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(Dimens.standard_16),
                         decoration: BoxDecoration(
-                          color: AppColors.colorSecondary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
+                          color: AppColors.colorSecondary.withValues(alpha: Dimens.decimal_1),
+                          borderRadius: BorderRadius.circular(Dimens.standard_12),
                           border: Border.all(
-                            color: AppColors.colorSecondary.withValues(alpha: 0.3),
+                            color: AppColors.colorSecondary.withValues(alpha: Dimens.decimal_3),
                           ),
                         ),
                         child: Column(
@@ -180,10 +225,10 @@ class _LoginState extends State<Login> {
                               children: [
                                 const Icon(
                                   Icons.info_outline,
-                                  size: 18,
+                                  size: Dimens.standard_18,
                                   color: AppColors.colorSecondary,
                                 ),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: Dimens.standard_8),
                                 Text(
                                   "Test Credentials",
                                   style: AppTextStyles.openSansBold14.copyWith(
@@ -192,7 +237,7 @@ class _LoginState extends State<Login> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: Dimens.standard_8),
                             Text(
                               "Username: emilys\nPassword: emilyspass",
                               style: AppTextStyles.openSansRegular14.copyWith(
@@ -203,7 +248,7 @@ class _LoginState extends State<Login> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: Dimens.standard_40),
                     ],
                   );
                 },
@@ -215,13 +260,14 @@ class _LoginState extends State<Login> {
     );
   }
 
+  /// Builds the error message widget shown below input fields
   Widget _buildFieldValidation(String errorValue) {
     return Padding(
-      padding: const EdgeInsets.only(top: 6),
+      padding: const EdgeInsets.only(top: Dimens.standard_6),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, size: 14, color: AppColors.colorRed),
-          const SizedBox(width: 4),
+          const Icon(Icons.error_outline, size: Dimens.standard_14, color: AppColors.colorRed),
+          const SizedBox(width: Dimens.standard_4),
           Text(
             errorValue,
             style: AppTextStyles.openSansRegular12.copyWith(
@@ -233,6 +279,7 @@ class _LoginState extends State<Login> {
     );
   }
 
+  /// Shows an error toast message
   void _showErrorSnackBar(BuildContext context, String message) {
     CustomToast.showErrorToast(context, message);
     log("ERROR ----- $message");

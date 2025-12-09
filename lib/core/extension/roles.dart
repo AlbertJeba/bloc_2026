@@ -1,6 +1,12 @@
+/// UserRole
+///
+/// Defines the types of users in the system.
 enum UserRole { admin, customer }
 
+/// Helper extension to convert Role to ID and back.
+/// Useful when sending/receiving data from API.
 extension UserRoleExtension on UserRole {
+  /// Get ID from Role
   int get id {
     switch (this) {
       case UserRole.admin:
@@ -10,6 +16,7 @@ extension UserRoleExtension on UserRole {
     }
   }
 
+  /// Get Role from ID
   static UserRole fromId(int id) {
     switch (id) {
       case 1:

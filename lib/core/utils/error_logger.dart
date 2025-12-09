@@ -2,8 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:bloc_2026/core/exceptions/http_exception.dart';
 import 'package:bloc_2026/core/network/model/either.dart';
 
+/// ErrorLogger
+///
+/// A helper class to standardize how we handle and print errors.
 class ErrorLogger {
-  /// Logs error to console in debug mode with formatted output
+  /// Logs an error to the console with a nice visual border.
+  /// Only prints in Debug mode.
   static void log(String identifier, dynamic error) {
     debugPrint('═══════════════════════════════════════');
     debugPrint('🔴 ERROR: $identifier');
@@ -11,17 +15,25 @@ class ErrorLogger {
     debugPrint('═══════════════════════════════════════');
   }
 
-  /// Helper function to handle exceptions in data sources
-  /// Usage: return ErrorLogger.handleException(e, 'ClassName.methodName');
+  /// Helps catch errors in DataSources and return them as an `AppException`.
+  ///
+  /// Usage:
+  /// ```dart
+  /// try {
+  ///   // API call
+  /// } catch (e) {
+  ///   return ErrorLogger.handleException(e, 'ClassName.methodName');
+  /// }
+  /// ```
   static Left<AppException, T> handleException<T>(
     dynamic exception,
     String identifier, {
     String? customMessage,
   }) {
-    // Log the error
+    // 1. Log to console
     log(identifier, exception);
 
-    // Return Left with AppException
+    // 2. Return standard error object (Left)
     return Left(
       AppException(
         message: customMessage ?? 'Unknown error occurred',

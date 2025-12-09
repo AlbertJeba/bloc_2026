@@ -2,6 +2,15 @@ import 'package:bloc_2026/core/network/model/either.dart';
 import 'package:bloc_2026/core/network/model/response.dart';
 import 'package:equatable/equatable.dart';
 
+/// AppException
+///
+/// A standard custom exception class for our app.
+/// Instead of using random strings or numbers, we use this object.
+///
+/// Contains:
+/// - message: User-friendly error text.
+/// - statusCode: HTML status code (404, 500) or 0 for local errors.
+/// - identifier: Technical info for developers (where it happened).
 class AppException implements Exception {
   final String message;
   final int statusCode;
@@ -19,6 +28,9 @@ class AppException implements Exception {
   }
 }
 
+/// CacheFailureException
+///
+/// Specific error when local database (Hive) fails.
 class CacheFailureException extends Equatable implements AppException {
   @override
   String get identifier => 'Cache failure exception';
@@ -33,8 +45,7 @@ class CacheFailureException extends Equatable implements AppException {
   List<Object?> get props => [message, statusCode, identifier];
 }
 
-//  extension
-
+/// Helper extension to easily convert an Exception to a "Left" (Error) return type.
 extension HttpExceptionExtension on AppException {
   Left<AppException, Response> get toLeft => Left<AppException, Response>(this);
 }

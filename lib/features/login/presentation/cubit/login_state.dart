@@ -1,6 +1,26 @@
 import 'package:equatable/equatable.dart';
 import 'package:bloc_2026/features/login/data/models/login_response.dart';
 
+/// LoginState - Holds all the data for the login screen.
+///
+/// What is State?
+/// - State is like a snapshot of the current situation
+/// - It holds all the data the UI needs to display
+/// - When state changes, the UI rebuilds to show the new data
+///
+/// Why use a single state class?
+/// - Makes it easy to track what's happening
+/// - All related data stays together
+/// - Using copyWith() makes updating safe and clean
+///
+/// Properties:
+/// - message: Error or success message
+/// - usernameError: Error text for username field
+/// - passwordError: Error text for password field
+/// - isLoading: True when API call is in progress
+/// - isFailure: True when login failed
+/// - isSuccess: True when login succeeded
+/// - loginData: The response from successful login
 class LoginState extends Equatable {
   final String message;
   final String usernameError;
@@ -10,6 +30,8 @@ class LoginState extends Equatable {
   final bool isSuccess;
   final LoginResponse? loginData;
 
+  /// Constructor with default values
+  /// All fields start empty or false by default
   const LoginState({
     this.message = '',
     this.usernameError = '',
@@ -20,6 +42,12 @@ class LoginState extends Equatable {
     this.loginData,
   });
 
+  /// Creates a new state with some values changed.
+  ///
+  /// Example:
+  /// state.copyWith(isLoading: true)
+  /// This creates a new state where isLoading is true,
+  /// but all other values stay the same.
   LoginState copyWith({
     String? message,
     String? usernameError,
@@ -40,6 +68,8 @@ class LoginState extends Equatable {
     );
   }
 
+  /// Tells Equatable which fields to compare.
+  /// Two states are equal if all these values are the same.
   @override
   List<Object?> get props => [
         message,

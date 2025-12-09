@@ -1,14 +1,23 @@
 {
+  "APP_NAME": "BLOC 2026",
+  "APP_SUBTITLE": "Learn Clean Architecture",
   "LOGIN": "Login",
   "USERNAME": "Username",
   "PASSWORD": "Password",
   "USERNAME_VALIDATION_TEXT": "Please enter your username",
   "PASSWORD_VALIDATION_TEXT": "Please enter your password",
+  "WELCOME_BACK": "Welcome Back!",
+  "SIGN_IN_CONTINUE": "Sign in to continue",
+  "TEST_CREDENTIALS": "Test Credentials",
   "DASHBOARD": "Dashboard",
   "PRODUCTS": "Products",
   "LOGOUT": "Logout",
   "WELCOME": "Welcome",
   "LOADING": "Loading...",
   "ERROR": "Error",
-  "RETRY": "Retry"
+  "RETRY": "Retry",
+  "CANCEL": "Cancel",
+  "LOGOUT_CONFIRM": "Are you sure you want to logout?",
+  "ERROR_SOMETHING_WRONG": "Oops! Something went wrong",
+  "NO_PRODUCTS": "No products available"
 }

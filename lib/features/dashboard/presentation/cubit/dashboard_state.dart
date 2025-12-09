@@ -1,6 +1,19 @@
 import 'package:equatable/equatable.dart';
 import 'package:bloc_2026/features/dashboard/data/models/product.dart';
 
+/// DashboardState - Holds all data for the dashboard screen.
+///
+/// Properties:
+/// - page: Current page number (for pagination)
+/// - totalProducts: Total number of products available from API
+/// - limit: How many products to load at once (default 10)
+/// - message: Error or info message
+/// - isLoading: True when loading first page
+/// - isLoadingMore: True when loading additional pages
+/// - isFailure: True when an error occurred
+/// - isSuccess: True when data loaded successfully
+/// - hasMore: True if there are more products to load
+/// - products: List of loaded products
 class DashboardState extends Equatable {
   final int page;
   final int totalProducts;
@@ -13,6 +26,7 @@ class DashboardState extends Equatable {
   final bool hasMore;
   final List<Product>? products;
 
+  /// Constructor with default values
   const DashboardState({
     this.page = 0,
     this.totalProducts = 0,
@@ -26,6 +40,11 @@ class DashboardState extends Equatable {
     this.products,
   });
 
+  /// Creates a new state with some values changed.
+  ///
+  /// Example:
+  /// state.copyWith(isLoading: true, products: newList)
+  /// This keeps all other values but updates isLoading and products.
   DashboardState copyWith({
     int? page,
     int? totalProducts,
@@ -52,6 +71,7 @@ class DashboardState extends Equatable {
     );
   }
 
+  /// List of properties to compare for equality
   @override
   List<Object?> get props => [
         page,

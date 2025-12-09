@@ -133,7 +133,7 @@ class CustomTextInputState extends State<CustomTextInput> {
                   color: _errorMessage != null
                       ? AppColors.colorRed
                       : AppColors.color858485,
-                  fontSize: 14,
+                  fontSize: Dimens.standard_14,
                   fontWeight: FontWeight.w400,
                 ),
                 filled: true,

@@ -3,37 +3,45 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+/// ConnectionStatusListener
+///
+/// Listens for internet connection changes (Online / Offline).
+///
+/// How it works:
+/// 1. Uses `connectivity_plus` to detect network changes (WiFi/Mobile).
+/// 2. Pings a reliable server (google.com) to verify actual internet access.
+/// 3. Broadcasts the status to the rest of the app via a Stream.
 class ConnectionStatusListener {
-  //This creates the single instance by calling the `_internal` constructor specified below
+  // Singleton instance
   static final _singleton = ConnectionStatusListener._internal();
 
   ConnectionStatusListener._internal();
 
   bool hasShownNoInternet = false;
 
-  //connectivity_plus
+  // Tools
   final Connectivity _connectivity = Connectivity();
 
-  //This is what's used to retrieve the instance through the app
+  // Public access
   static ConnectionStatusListener getInstance() => _singleton;
 
-  //This tracks the current connection status
+  // Tracker
   bool hasConnection = false;
 
-  //This is how we'll allow subscribing to connection changes
+  // Controller to send updates to listeners
   StreamController connectionChangeController = StreamController.broadcast();
 
+  // Stream that UI can listen to
   Stream get connectionChange => connectionChangeController.stream;
 
-  //flutter_connectivity's listener
+  /// Internal listener for connectivity_plus
   void _connectionChange(List<ConnectivityResult> results) {
-    // Assuming you want to use the first result in the list
     if (results.isNotEmpty) {
       checkConnection();
     }
   }
 
-  //The test to actually see if there is a connection
+  /// Real test: tries to lookup google.com to verify internet
   Future<bool> checkConnection() async {
     bool previousConnection = hasConnection;
 
@@ -48,7 +56,7 @@ class ConnectionStatusListener {
       hasConnection = false;
     }
 
-    //The connection status changed send out an update to all listeners
+    // If status changed, notify listeners
     if (previousConnection != hasConnection) {
       connectionChangeController.add(hasConnection);
     }
@@ -56,35 +64,26 @@ class ConnectionStatusListener {
     return hasConnection;
   }
 
-  //Hook into connectivity_plus's Stream to listen for changes
-  //And check the connection status out of the gate
+  /// Initialize listener (call this at app start)
   Future<void> initialize() async {
     _connectivity.onConnectivityChanged.listen(_connectionChange);
     await checkConnection();
   }
 
-  //A clean up method to close our StreamController
-  //Because this is meant to exist through the entire application life cycle this isn't really an issue
+  /// Cleanup
   void dispose() {
     connectionChangeController.close();
   }
 }
 
+/// Helper to handle UI updates when connection changes
 void updateConnectivity(
   dynamic hasConnection,
   ConnectionStatusListener connectionStatus,
 ) {
   if (!hasConnection) {
     connectionStatus.hasShownNoInternet = true;
-    // showDialog(
-    //     context: MyApp.navigatorKey.currentContext!,
-    //     builder: (BuildContext context) {
-    //       return AppSuccessPopUp(
-    //         descriptionText: "NO_INTERNET".tr,
-    //         titleText: "ALERT".tr,
-    //         buttonTitleText: "CLOSE".tr,
-    //       );
-    //     });
+    // Here we can show a "No Internet" popup or banner
   } else {
     if (connectionStatus.hasShownNoInternet) {
       connectionStatus.hasShownNoInternet = false;

@@ -5,6 +5,7 @@ import 'package:bloc_2026/features/dashboard/data/models/product.dart';
 import 'package:bloc_2026/features/dashboard/domain/usecases/get_products_usecase.dart';
 import 'package:bloc_2026/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:bloc_2026/features/dashboard/presentation/cubit/dashboard_state.dart';
+import 'package:bloc_2026/shared/config/dimens.dart';
 import 'package:bloc_2026/shared/theme/app_colors.dart';
 import 'package:bloc_2026/shared/theme/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:go_router/go_router.dart';
 
+/// Dashboard Screen - The main screen after login.
+///
+/// What it does:
+/// 1. Shows welcome message with user's name
+/// 2. Displays a grid of products from the API
+/// 3. Supports pull-to-refresh to reload products
+/// 4. Loads more products when scrolling to bottom (pagination)
+/// 5. Allows user to logout
+///
+/// This screen uses BLoC pattern (DashboardCubit) to manage state.
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
 
@@ -20,38 +31,47 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  // The cubit that handles product loading logic
   late DashboardCubit _dashboardCubit;
+
+  // Controller to detect when user scrolls
   late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
+    // Set up scroll controller for pagination
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
     _initializeCubit();
   }
 
+  /// Creates the DashboardCubit and fetches products
   void _initializeCubit() {
     final getProductsUseCase = injector<GetProductsUseCase>();
     _dashboardCubit = DashboardCubit(getProductsUseCase);
-    _dashboardCubit.getProducts();
+    _dashboardCubit.getProducts(); // Load first page of products
   }
 
+  /// Called every time user scrolls
+  /// If user is near the bottom, load more products
   void _onScroll() {
     if (_isBottom) {
       _dashboardCubit.loadMoreProducts();
     }
   }
 
+  /// Checks if user has scrolled to 90% of the list
   bool get _isBottom {
     if (!_scrollController.hasClients) return false;
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * 0.9);
+    return currentScroll >= (maxScroll * Dimens.decimal_9);
   }
 
   @override
   void dispose() {
+    // Clean up scroll controller when screen is closed
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
@@ -59,9 +79,11 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the logged in user's data
     final user = UserPreferences.instance.getUser();
 
     return BlocProvider(
+      // Provide the DashboardCubit to this screen so we can access it
       create: (context) => _dashboardCubit,
       child: Scaffold(
         backgroundColor: AppColors.appBackGround,
@@ -69,10 +91,16 @@ class _DashboardState extends State<Dashboard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Top bar with user info and logout button
               _buildAppBar(user),
+
+              // Products list area
               Expanded(
+                // BlocBuilder listens to state changes and rebuilds the UI
+                // It's like setState() but only for this part of the screen
                 child: BlocBuilder<DashboardCubit, DashboardState>(
                   builder: (context, state) {
+                    // Show loading spinner when first loading
                     if (state.isLoading &&
                         (state.products == null || state.products!.isEmpty)) {
                       return const Center(
@@ -82,21 +110,29 @@ class _DashboardState extends State<Dashboard> {
                       );
                     }
 
+                    // Show error message if loading failed
                     if (state.isFailure &&
                         (state.products == null || state.products!.isEmpty)) {
                       return _buildErrorState(state.message);
                     }
 
+                    // Show products if we have them
                     if (state.products != null && state.products!.isNotEmpty) {
                       return RefreshIndicator(
+                        // Allows user to pull down to reload the list
                         color: AppColors.colorPrimary,
                         onRefresh: () async => _dashboardCubit.refresh(),
+                        
+                        // CustomScrollView allows us to mix different scrolling widgets
+                        // like lists and grids together
                         child: CustomScrollView(
                           controller: _scrollController,
                           slivers: [
+                            // Header with "Products" title and count
+                            // SliverToBoxAdapter adapts a normal widget to be used in a sliver
                             SliverToBoxAdapter(
                               child: Padding(
-                                padding: const EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(Dimens.standard_16),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -119,17 +155,19 @@ class _DashboardState extends State<Dashboard> {
                                 ),
                               ),
                             ),
+
+                            // Product cards in a 2-column grid
                             SliverPadding(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
+                                horizontal: Dimens.standard_16,
                               ),
                               sliver: SliverGrid(
                                 gridDelegate:
                                     const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      childAspectRatio: 0.68,
-                                      crossAxisSpacing: 12,
-                                      mainAxisSpacing: 12,
+                                      crossAxisCount: 2, // 2 columns
+                                      childAspectRatio: 0.68, // Card height/width ratio - Keeping hardcoded as exact ratio might not be in Dimens or is specific design choice
+                                      crossAxisSpacing: Dimens.standard_12,
+                                      mainAxisSpacing: Dimens.standard_12,
                                     ),
                                 delegate: SliverChildBuilderDelegate((
                                   context,
@@ -141,20 +179,24 @@ class _DashboardState extends State<Dashboard> {
                                 }, childCount: state.products!.length),
                               ),
                             ),
+
+                            // Show loading spinner when loading more
                             if (state.isLoadingMore)
                               const SliverToBoxAdapter(
                                 child: Padding(
-                                  padding: EdgeInsets.all(20),
+                                  padding: EdgeInsets.all(Dimens.standard_20),
                                   child: Center(
                                     child: CircularProgressIndicator(
                                       color: AppColors.colorPrimary,
-                                      strokeWidth: 2,
+                                      strokeWidth: Dimens.standard_2,
                                     ),
                                   ),
                                 ),
                               ),
+
+                            // Bottom padding
                             const SliverToBoxAdapter(
-                              child: SizedBox(height: 20),
+                              child: SizedBox(height: Dimens.standard_20),
                             ),
                           ],
                         ),
@@ -172,27 +214,29 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+  /// Builds the top app bar with user info and logout button
   Widget _buildAppBar(dynamic user) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(Dimens.standard_16),
       decoration: BoxDecoration(
         color: AppColors.colorWhite,
         boxShadow: [
           BoxShadow(
             color: AppColors.shadowColor,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            blurRadius: Dimens.standard_8,
+            offset: const Offset(Dimens.standard_0, Dimens.standard_2),
           ),
         ],
       ),
       child: Row(
         children: [
+          // User avatar (first letter of name)
           Container(
-            width: 48,
-            height: 48,
+            width: Dimens.standard_48,
+            height: Dimens.standard_48,
             decoration: BoxDecoration(
               color: AppColors.colorPrimary,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(Dimens.standard_12),
             ),
             child: Center(
               child: Text(
@@ -206,7 +250,9 @@ class _DashboardState extends State<Dashboard> {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: Dimens.standard_12),
+
+          // Welcome text and user name
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,18 +272,20 @@ class _DashboardState extends State<Dashboard> {
               ],
             ),
           ),
+
+          // Logout button
           IconButton(
             onPressed: () => _showLogoutDialog(context),
             icon: Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(Dimens.standard_8),
               decoration: BoxDecoration(
-                color: AppColors.colorRed.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
+                color: AppColors.colorRed.withValues(alpha: Dimens.decimal_1),
+                borderRadius: BorderRadius.circular(Dimens.standard_10),
               ),
               child: const Icon(
                 Icons.logout_rounded,
                 color: AppColors.colorRed,
-                size: 20,
+                size: Dimens.standard_20,
               ),
             ),
           ),
@@ -246,66 +294,72 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+  /// Builds a single product card
   Widget _buildProductCard(Product product) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.colorWhite,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(Dimens.standard_16),
         boxShadow: [
           BoxShadow(
             color: AppColors.shadowColor,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            blurRadius: Dimens.standard_8,
+            offset: const Offset(Dimens.standard_0, Dimens.standard_2),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Product image section (60% of card height)
           Expanded(
             flex: 3,
             child: Stack(
               children: [
+                // Product image
                 ClipRRect(
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
+                    topLeft: Radius.circular(Dimens.standard_16),
+                    topRight: Radius.circular(Dimens.standard_16),
                   ),
                   child: Image.network(
                     product.thumbnail ?? '',
                     width: double.infinity,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
+                      // Show placeholder if image fails to load
                       return Container(
                         color: AppColors.inputBackground,
                         child: const Icon(
                           Icons.image_not_supported_outlined,
-                          size: 40,
+                          size: Dimens.standard_40,
                           color: AppColors.textLight,
                         ),
                       );
                     },
                   ),
                 ),
+
+                // Discount badge (top left corner)
                 if (product.discountPercentage != null &&
                     product.discountPercentage! > 0)
                   Positioned(
-                    top: 8,
-                    left: 8,
+                    top: Dimens.standard_8,
+                    left: Dimens.standard_8,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
+                        horizontal: Dimens.standard_8,
+                        vertical: Dimens.standard_4,
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.colorRed,
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(Dimens.standard_6),
                       ),
                       child: Text(
                         "-${product.discountPercentage!.toStringAsFixed(0)}%",
                         style: AppTextStyles.openSansBold12.copyWith(
                           color: AppColors.colorWhite,
-                          fontSize: 11,
+                          fontSize: Dimens.standard_11,
                         ),
                       ),
                     ),
@@ -313,13 +367,16 @@ class _DashboardState extends State<Dashboard> {
               ],
             ),
           ),
+
+          // Product details section (40% of card height)
           Expanded(
             flex: 2,
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(Dimens.standard_12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Product title
                   Text(
                     product.title ?? '',
                     maxLines: 2,
@@ -329,36 +386,41 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                   const Spacer(),
+
+                  // Price and rating row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // Price
                       Text(
                         '\$${product.price?.toStringAsFixed(2) ?? '0.00'}',
                         style: AppTextStyles.openSansBold14.copyWith(
                           color: AppColors.colorPrimary,
-                          fontSize: 15,
+                          fontSize: Dimens.standard_15,
                         ),
                       ),
+
+                      // Rating badge
                       if (product.rating != null)
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
+                            horizontal: Dimens.standard_6,
+                            vertical: Dimens.standard_2,
                           ),
                           decoration: BoxDecoration(
                             color: AppColors.colorYellow.withValues(
-                              alpha: 0.15,
+                              alpha: Dimens.decimal_15,
                             ),
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(Dimens.standard_6),
                           ),
                           child: Row(
                             children: [
                               const Icon(
                                 Icons.star_rounded,
                                 color: AppColors.colorYellow,
-                                size: 14,
+                                size: Dimens.standard_14,
                               ),
-                              const SizedBox(width: 2),
+                              const SizedBox(width: Dimens.standard_2),
                               Text(
                                 product.rating!.toStringAsFixed(1),
                                 style: AppTextStyles.openSansBold12.copyWith(
@@ -379,33 +441,34 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+  /// Builds the error state UI with retry button
   Widget _buildErrorState(String message) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(Dimens.standard_24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(Dimens.standard_20),
               decoration: BoxDecoration(
-                color: AppColors.colorRed.withValues(alpha: 0.1),
+                color: AppColors.colorRed.withValues(alpha: Dimens.decimal_1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.error_outline_rounded,
-                size: 48,
+                size: Dimens.standard_48,
                 color: AppColors.colorRed,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: Dimens.standard_24),
             Text(
               "Oops! Something went wrong",
               style: AppTextStyles.openSansBold18.copyWith(
                 color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: Dimens.standard_8),
             Text(
               message,
               style: AppTextStyles.openSansRegular14.copyWith(
@@ -413,7 +476,7 @@ class _DashboardState extends State<Dashboard> {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: Dimens.standard_24),
             ElevatedButton.icon(
               onPressed: () => _dashboardCubit.refresh(),
               icon: const Icon(Icons.refresh_rounded),
@@ -422,11 +485,11 @@ class _DashboardState extends State<Dashboard> {
                 backgroundColor: AppColors.colorPrimary,
                 foregroundColor: AppColors.colorWhite,
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
+                  horizontal: Dimens.standard_24,
+                  vertical: Dimens.standard_12,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(Dimens.standard_12),
                 ),
               ),
             ),
@@ -436,11 +499,12 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+  /// Shows the logout confirmation dialog
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimens.standard_16)),
         title: Text("LOGOUT".tr, style: AppTextStyles.openSansBold18),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -449,18 +513,21 @@ class _DashboardState extends State<Dashboard> {
               "Are you sure you want to logout?",
               style: AppTextStyles.openSansRegular14,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: Dimens.standard_24),
+
+            // Cancel and Logout buttons in a row
             Row(
               children: [
+                // Cancel button
                 Expanded(
                   child: SizedBox(
-                    height: 44,
+                    height: Dimens.standard_44,
                     child: OutlinedButton(
                       onPressed: () => dialogContext.pop(),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: AppColors.colorGrey),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(Dimens.standard_10),
                         ),
                       ),
                       child: Text(
@@ -472,21 +539,23 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: Dimens.standard_12),
+
+                // Logout button
                 Expanded(
                   child: SizedBox(
-                    height: 44,
+                    height: Dimens.standard_44,
                     child: ElevatedButton(
                       onPressed: () async {
-                        dialogContext.pop();
+                        dialogContext.pop(); // Close dialog
                         await LogoutService.instance.logoutAndNavigate();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.colorRed,
                         foregroundColor: AppColors.colorWhite,
-                        elevation: 0,
+                        elevation: Dimens.standard_0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(Dimens.standard_10),
                         ),
                       ),
                       child: Text(

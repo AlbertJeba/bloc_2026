@@ -16,11 +16,27 @@ import 'package:get/get_utils/get_utils.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
+/// ExceptionHandlerMixin
+///
+/// This is a "Mixin" - a piece of code we can add to other classes (like NetworkService).
+/// It handles COMMMON errors so we don't have to write try-catch blocks everywhere.
+///
+/// What it handles:
+/// 1. No Internet connection.
+/// 2. Unauthorized (401) -> Automatically logs user out.
+/// 3. Server errors (500).
+/// 4. Timeouts.
 mixin ExceptionHandlerMixin on NetworkService {
   final HiveService _hiveService = GetIt.instance<HiveService>();
   UserPreferences? userPreferences;
   NetworkService? networkService;
 
+  /// Main handler function. Wraps an API call.
+  ///
+  /// Usage:
+  /// ```dart
+  /// return handleException(() => dio.get(...));
+  /// ```
   Future<Either<AppException, response.Response>>
   handleException<T extends Object>(
     Future<Response<dynamic>> Function() handler, {
@@ -28,10 +44,13 @@ mixin ExceptionHandlerMixin on NetworkService {
   }) async {
     var connectionStatus = ConnectionStatusListener.getInstance();
 
-    // Check for internet connection
+    // 1. Check Internet first
     if (await connectionStatus.checkConnection()) {
       try {
+        // 2. Try the API call
         Response<dynamic> res = await handler();
+
+        // 3. If success, return Right (Success data)
         return Right(
           response.Response(
             statusCode: res.statusCode ?? 200,
@@ -40,11 +59,13 @@ mixin ExceptionHandlerMixin on NetworkService {
           ),
         );
       } catch (e) {
+        // 4. If error (catch block), figure out what happened
         String message = '';
         String identifier = '';
         int statusCode = 0;
 
         if (e is DioException) {
+          // Special Case: Session Expired (401)
           if (e.response?.statusCode == 401) {
             log("Unauthorized - Triggering logout...${e.response?.statusCode}");
             logout();
@@ -58,7 +79,7 @@ mixin ExceptionHandlerMixin on NetworkService {
             );
           }
 
-          // Extract error message from response body
+          // Extract readable message from backend
           final responseData = e.response?.data;
           if (responseData is Map<String, dynamic> &&
               responseData.containsKey('message')) {
@@ -78,6 +99,7 @@ mixin ExceptionHandlerMixin on NetworkService {
           identifier = 'Unknown error ${e.toString()}\n at $endpoint';
         }
 
+        // Return the error
         return Left(
           AppException(
             message: message,
@@ -87,6 +109,7 @@ mixin ExceptionHandlerMixin on NetworkService {
         );
       }
     } else {
+      // No Internet
       log("No internet");
       return Left(
         AppException(
@@ -98,6 +121,7 @@ mixin ExceptionHandlerMixin on NetworkService {
     }
   }
 
+  /// Logs user out if session expired
   void logout() async {
     await _hiveService.clear();
     userPreferences?.clearPreferences();
@@ -105,6 +129,7 @@ mixin ExceptionHandlerMixin on NetworkService {
     nav();
   }
 
+  /// Redirect to Login
   void nav() {
     navigatorKey.currentState?.context.go(RoutesName.loginPath);
   }
