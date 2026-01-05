@@ -45,13 +45,13 @@ flutter:
     - assets/icons/
     - assets/gif/
 
-fonts:
-  - family: OpenSans
-    fonts:
-      - asset: assets/fonts/OpenSans-Bold.ttf
-        weight: 700
-      - asset: assets/fonts/OpenSans-Regular.ttf
-      - asset: assets/fonts/OpenSans-Light.ttf
+  fonts:
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/OpenSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/OpenSans-Regular.ttf
+        - asset: assets/fonts/OpenSans-Light.ttf
 
 flutter_launcher_icons:
   android: "launcher_icon"
