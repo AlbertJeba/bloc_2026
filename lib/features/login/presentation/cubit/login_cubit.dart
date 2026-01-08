@@ -6,7 +6,7 @@ import 'package:bloc_2026/core/utils/configuration.dart';
 import 'package:bloc_2026/core/utils/error_logger.dart';
 import 'package:bloc_2026/features/login/data/models/login_request.dart';
 import 'package:bloc_2026/features/login/data/models/login_response.dart';
-import 'package:bloc_2026/features/login/domain/usecases/login_usecase.dart';
+import 'package:bloc_2026/features/login/domain/use_case/login_usecase.dart';
 import 'package:bloc_2026/shared/models/user_data.dart';
 import 'package:bloc/bloc.dart';
 import 'package:get/get_utils/get_utils.dart';

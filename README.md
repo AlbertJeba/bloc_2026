@@ -160,7 +160,7 @@ This project follows **Clean Architecture**. Each feature (e.g., `login`, `dashb
 #### 1. 📂 Data (`lib/features/feature_name/data/`)
 *The "Hardware" of the feature. Handles raw data.*
 
-*   **Datasources** (`datasources/`): Files that actually call the API (e.g., `Dio` requests) or Local DB.
+*   **Datasource** (`datasource/`): Files that actually call the API (e.g., `Dio` requests) or Local DB.
 *   **Models** (`models/`): Dart classes that match the API JSON response exactly (using `fromJson`).
 *   **Repositories Implementation** (`repositories/`): The implementation of the Domain Repository. It decides *where* to get data (API vs Cache).
 
@@ -168,7 +168,7 @@ This project follows **Clean Architecture**. Each feature (e.g., `login`, `dashb
 *The "Brain" of the feature. Pure business logic, no UI code.*
 
 *   **Repositories** (`repositories/`): Abstract interfaces (contracts) defining *what* data is needed, but not *how* to get it.
-*   **UseCases** (`usecases/`): Single-purpose classes that do ONE thing (e.g., `LoginUseCase`, `GetProductsUseCase`). The UI calls these.
+*   **UseCase** (`use_case/`): Single-purpose classes that do ONE thing (e.g., `LoginUseCase`, `GetProductsUseCase`). The UI calls these.
 
 #### 3. 📂 Presentation (`lib/features/feature_name/presentation/`)
 *The "Face" of the feature. What the user sees.*
@@ -216,12 +216,12 @@ lib/
 │   │   └── presentation/
 │   ├── login/                   # Login feature
 │   │   ├── data/
-│   │   │   ├── datasources/
+│   │   │   ├── datasource/
 │   │   │   ├── models/
 │   │   │   └── repositories/
 │   │   ├── domain/
 │   │   │   ├── repositories/
-│   │   │   └── usecases/
+│   │   │   └── use_case/
 │   │   └── presentation/
 │   │       ├── cubit/
 │   │       └── pages/
@@ -283,7 +283,7 @@ Follow these steps to add a new feature (e.g., `profile`):
 ### Step 1: Create the folder structure
 
 ```bash
-mkdir -p lib/features/profile/{data/{datasources,models,repositories},domain/{repositories,usecases},presentation/{cubit,pages}}
+mkdir -p lib/features/profile/{data/{datasource,models,repositories},domain/{repositories,use_case},presentation/{cubit,pages}}
 ```
 
 ### Step 2: Create files in order
@@ -292,14 +292,14 @@ mkdir -p lib/features/profile/{data/{datasources,models,repositories},domain/{re
    ```
    lib/features/profile/domain/
    ├── repositories/profile_repository.dart    # Abstract interface
-   └── usecases/get_profile_usecase.dart       # Business logic
+   └── use_case/get_profile_usecase.dart       # Business logic
    ```
 
 2. **Data Layer** (Implement the contract)
    ```
    lib/features/profile/data/
    ├── models/profile_model.dart               # JSON model
-   ├── datasources/profile_remote_data_source.dart
+   ├── datasource/profile_remote_data_source.dart
    └── repositories/profile_repository_impl.dart
    ```
 
@@ -706,12 +706,6 @@ dart run rename_app:main all="App Name"
 - [ ] Avoid rebuilding entire widget trees
 - [ ] Use `ListView.builder` for long lists
 - [ ] Cache network images with `cached_network_image`
-
----
-
-## 📄 License
-
-This project is for internal training purposes.
 
 ---
 

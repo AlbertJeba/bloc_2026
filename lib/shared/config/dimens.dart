@@ -1,3 +1,18 @@
+/// Dimens - Standardized Dimension Constants
+/// 
+/// This class provides predefined dimension values for consistent spacing,
+/// sizing, and layout across the entire application.
+/// 
+/// Categories:
+/// - `decimal_X` - Values from 0.1 to 0.15 (opacity, ratios)
+/// - `letterSpacing_X` - Letter spacing values
+/// - `standard_X` - Integer values from 0 to 700 (padding, margins, sizes)
+/// 
+/// Usage:
+/// ```dart
+/// Padding(padding: EdgeInsets.all(Dimens.standard_16))
+/// SizedBox(height: Dimens.standard_20)
+/// ```
 class Dimens {
   static const double decimal_1 = 0.1;
   static const double decimal_2 = 0.2;

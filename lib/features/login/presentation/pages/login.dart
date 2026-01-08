@@ -5,7 +5,7 @@ import 'package:bloc_2026/core/constants/routes.dart';
 import 'package:bloc_2026/core/dependency_injection/injector.dart';
 import 'package:bloc_2026/core/extension/roles.dart';
 import 'package:bloc_2026/core/utils/configuration.dart';
-import 'package:bloc_2026/features/login/domain/usecases/login_usecase.dart';
+import 'package:bloc_2026/features/login/domain/use_case/login_usecase.dart';
 import 'package:bloc_2026/features/login/presentation/cubit/login_cubit.dart';
 import 'package:bloc_2026/features/login/presentation/cubit/login_state.dart';
 import 'package:bloc_2026/shared/config/dimens.dart';

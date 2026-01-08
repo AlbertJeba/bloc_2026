@@ -1,7 +1,22 @@
 import 'package:bloc_2026/shared/config/dimens.dart';
 import 'package:flutter/material.dart';
 
+/// AppTextStyles - Predefined Text Style Constants
+/// 
+/// Provides consistent typography across the application using
+/// the OpenSans font family.
+/// 
+/// Naming Convention: `openSans{Weight}{Size}`
+/// - Weight: Regular, SemiBold, Bold
+/// - Size: Font size in pixels (10, 12, 14, 16, 18, 20, 24, 32, 40, 44)
+/// 
+/// Usage:
+/// ```dart
+/// Text('Hello', style: AppTextStyles.openSansBold16)
+/// Text('Subtitle', style: AppTextStyles.openSansRegular14.copyWith(color: Colors.grey))
+/// ```
 class AppTextStyles {
+  /// The font family used throughout the app.
   static const String fontFamily = 'OpenSans';
 
   static TextStyle openSansSemiBold16 = const TextStyle(

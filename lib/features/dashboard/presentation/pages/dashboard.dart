@@ -2,7 +2,7 @@ import 'package:bloc_2026/core/dependency_injection/injector.dart';
 import 'package:bloc_2026/core/network/logout_service_function.dart';
 import 'package:bloc_2026/core/utils/configuration.dart';
 import 'package:bloc_2026/features/dashboard/data/models/product.dart';
-import 'package:bloc_2026/features/dashboard/domain/usecases/get_products_usecase.dart';
+import 'package:bloc_2026/features/dashboard/domain/use_case/get_products_usecase.dart';
 import 'package:bloc_2026/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:bloc_2026/features/dashboard/presentation/cubit/dashboard_state.dart';
 import 'package:bloc_2026/shared/config/dimens.dart';

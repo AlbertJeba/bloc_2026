@@ -2,7 +2,25 @@ import 'package:bloc_2026/shared/theme/app_colors.dart';
 import 'package:bloc_2026/shared/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 
+/// AppTheme - Application Theme Configuration
+/// 
+/// Provides the app's ThemeData with customized styling for:
+/// - Color scheme (primary, secondary, surface colors)
+/// - Typography (text styles using OpenSans font)
+/// - Button themes (elevated, outlined, text buttons)
+/// - Input decoration (text fields)
+/// - Card, divider, icon themes
+/// - Snackbar and navigation bar themes
+/// 
+/// Usage:
+/// ```dart
+/// MaterialApp(theme: AppTheme.lightTheme)
+/// ```
 class AppTheme {
+  /// Returns the light theme configuration.
+  /// 
+  /// Uses Material 3 design with custom color scheme from [AppColors]
+  /// and typography from [AppTextStyles].
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,

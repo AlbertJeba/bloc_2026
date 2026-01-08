@@ -6,21 +6,71 @@ import 'package:bloc_2026/shared/widgets/svg_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+/// CustomTextInput - Reusable Styled Text Field Widget
+/// 
+/// A custom text input field with consistent styling, validation support,
+/// and optional features like password visibility toggle.
+/// 
+/// Features:
+/// - Title label above the field
+/// - Optional required field indicator (*)
+/// - Password visibility toggle
+/// - Custom SVG icon support
+/// - Error message display
+/// - Input type and length restrictions
+/// - Numeric input blocking option
+/// 
+/// Usage:
+/// ```dart
+/// CustomTextInput(
+///   title: 'Email',
+///   hintText: 'Enter your email',
+///   textEditingController: emailController,
+///   isRequired: true,
+///   inputType: TextInputType.emailAddress,
+/// )
+/// ```
 class CustomTextInput extends StatefulWidget {
+  /// Placeholder text shown when the field is empty.
   final String hintText;
+  
+  /// Optional SVG icon path to display at the end of the field.
   final String? svgIconPath;
+  
+  /// Label text displayed above the input field.
   final String title;
+  
+  /// If true, obscures text and shows password toggle icon.
   final bool isPassword;
+  
+  /// If true, displays a red asterisk (*) next to the title.
   final bool isRequired;
+  
+  /// Static error message to display below the field.
   final String errorMessage;
+  
+  /// If false, the field is disabled and grayed out.
   final bool isEnabled;
+  
+  /// Controller for the text field value.
   final TextEditingController textEditingController;
+  
+  /// Callback fired when the text changes.
   final Function(String value)? onChange;
+  
+  /// Keyboard type (email, number, text, etc.).
   final TextInputType? inputType;
+  
+  /// Maximum character length allowed.
   final int? maxLength;
+  
+  /// If true, blocks numeric input.
   final bool? disableNumber;
+  
+  /// Optional tooltip text (currently unused).
   final String tooltip;
 
+  /// Creates a custom text input widget.
   const CustomTextInput({
     super.key,
     required this.hintText,
@@ -42,6 +92,12 @@ class CustomTextInput extends StatefulWidget {
   CustomTextInputState createState() => CustomTextInputState();
 }
 
+/// State for [CustomTextInput].
+/// 
+/// Manages:
+/// - Text presence tracking for icon color changes
+/// - Password visibility toggle
+/// - Dynamic error message display
 class CustomTextInputState extends State<CustomTextInput> {
   bool _hasText = false;
   bool _isObscured = true;

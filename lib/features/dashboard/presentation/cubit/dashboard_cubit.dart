@@ -2,7 +2,7 @@ import 'package:bloc_2026/core/network/model/either.dart';
 import 'package:bloc_2026/core/utils/error_logger.dart';
 import 'package:bloc_2026/features/dashboard/data/models/product.dart';
 import 'package:bloc_2026/features/dashboard/data/models/products_response.dart';
-import 'package:bloc_2026/features/dashboard/domain/usecases/get_products_usecase.dart';
+import 'package:bloc_2026/features/dashboard/domain/use_case/get_products_usecase.dart';
 import 'package:bloc/bloc.dart';
 import 'dashboard_state.dart';
 
