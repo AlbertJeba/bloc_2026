@@ -10,6 +10,7 @@ A production-ready Flutter template demonstrating **Clean Architecture**, **BLoC
 - [Getting Started](#-getting-started)
 - [Environments & Flavors](#-environments--flavors)
 - [Project Architecture](#️-project-architecture-clean-architecture)
+- [Development Standards](#-development-standards)
 - [Folder Structure](#-folder-structure)
 - [Core & Shared Modules](#-core--shared-modules)
 - [Adding a New Feature](#-adding-a-new-feature)
@@ -26,9 +27,9 @@ A production-ready Flutter template demonstrating **Clean Architecture**, **BLoC
 
 ## 📱 What This App Does
 
-1.  **Splash Screen** - Shows app logo with animations, checks if user is logged in.
-2.  **Login Screen** - User enters username/password to authenticate.
-3.  **Dashboard** - Displays products from API with pagination, pull-to-refresh, and logout.
+1.  **Splash Screen** - Animations and session check.
+2.  **Login Screen** - Authentication using the standardized `PrimaryButton`.
+3.  **Dashboard** - Products with pagination and cached `CustomNetworkImage`.
 
 ---
 
@@ -38,7 +39,7 @@ A production-ready Flutter template demonstrating **Clean Architecture**, **BLoC
 
 | Requirement | Version |
 |-------------|---------|
-| Flutter SDK | `3.38.4` |
+| Flutter SDK | `3.38.7` |
 | Dart SDK | `^3.10.3` |
 | Android Studio / VS Code | Latest |
 | Xcode (for iOS) | Latest |
@@ -155,6 +156,31 @@ This project follows **Clean Architecture**. Each feature (e.g., `login`, `dashb
 └─────────────────────────────────────────────────────────────┘
 ```
 
+---
+
+## 🛠️ Development Standards (MANDATORY)
+
+Follow these standards to maintain architectural integrity:
+
+### 1. Model Structure
+Every data model must follow this exact order:
+1. **Top-Level Helpers**: `xxxFromJson()` and `xxxToJson()`.
+2. **Variable Declarations**: Nullable variables at the very top.
+3. **Default Constructor**: Using `this.xxx` parameters.
+4. **Named Constructor**: `Model.fromJson(dynamic json)`.
+5. **Method**: `Map<String, dynamic> toJson()`.
+
+### 2. Request Parameters
+- **NEVER** pass primitive values (strings, ints) through layers.
+- **ALWAYS** create a Request Model (e.g., `ProductRequest`) and pass the entire object.
+
+### 3. UI Values
+- **Dimensions**: Use `Dimens.dart` for all spacing, padding, and radii.
+- **Strings**: Use `AppStrings.dart` (localized via `en.json`).
+- **Loader**: Use `CustomLoader()` for all progress indicators.
+
+---
+
 ### Layer Details
 
 #### 1. 📂 Data (`lib/features/feature_name/data/`)
@@ -242,8 +268,10 @@ lib/
     │   └── text_styles.dart     # Typography
     └── widgets/                 # Reusable widgets
         ├── custom_loader.dart
+        ├── custom_network_image.dart
         ├── custom_text_input.dart
         ├── custom_toast.dart
+        ├── primary_button.dart
         └── svg_image.dart
 ```
 
@@ -272,13 +300,18 @@ lib/
 | `config/` | App configuration (e.g., dimensions, sizes). |
 | `models/` | Shared data models used across features. |
 | `theme/` | App theme, colors, and text styles. |
-| `widgets/` | Reusable widgets (e.g., `CustomLoader`, `CustomTextInput`, `CustomToast`, `SvgImage`). |
+| `widgets/` | `PrimaryButton`, `CustomNetworkImage`, `CustomLoader`, `CustomTextInput`, `CustomToast`. |
 
 ---
 
 ## ➕ Adding a New Feature
 
 Follow these steps to add a new feature (e.g., `profile`):
+
+- **Quick Scaffolding**: 
+  `mkdir -p lib/features/NAME/{data/{datasource,models,repositories},domain/{repositories,use_case},presentation/{cubit,pages}}`
+- **File Initializing**:
+  `NAME="feature_name" && touch lib/features/$NAME/{data/datasource/${NAME}_remote_data_source.dart,data/repositories/${NAME}_repository_impl.dart,domain/repositories/${NAME}_repository.dart,domain/use_case/${NAME}_use_case.dart,presentation/cubit/{${NAME}_cubit.dart,${NAME}_state.dart},presentation/pages/${NAME}.dart}`
 
 ### Step 1: Create the folder structure
 

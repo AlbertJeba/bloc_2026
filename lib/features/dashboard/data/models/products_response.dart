@@ -1,7 +1,16 @@
+import 'dart:convert';
 import 'package:bloc_2026/features/dashboard/data/models/product.dart';
+
+ProductsResponse productsResponseFromJson(String str) => ProductsResponse.fromJson(json.decode(str));
+String productsResponseToJson(ProductsResponse data) => json.encode(data.toJson());
 
 /// Products response model matching DummyJSON products list response
 class ProductsResponse {
+  List<Product>? products;
+  int? total;
+  int? skip;
+  int? limit;
+
   ProductsResponse({
     this.products,
     this.total,
@@ -20,11 +29,6 @@ class ProductsResponse {
     skip = json['skip'];
     limit = json['limit'];
   }
-
-  List<Product>? products;
-  int? total;
-  int? skip;
-  int? limit;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

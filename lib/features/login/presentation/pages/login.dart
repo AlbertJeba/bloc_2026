@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bloc_2026/core/constants/app_strings.dart';
 import 'package:bloc_2026/core/constants/asset_path.dart';
 import 'package:bloc_2026/core/constants/routes.dart';
 import 'package:bloc_2026/core/dependency_injection/injector.dart';
@@ -13,9 +14,9 @@ import 'package:bloc_2026/shared/theme/app_colors.dart';
 import 'package:bloc_2026/shared/theme/text_styles.dart';
 import 'package:bloc_2026/shared/widgets/custom_text_input.dart';
 import 'package:bloc_2026/shared/widgets/custom_toast.dart';
+import 'package:bloc_2026/shared/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get_utils/get_utils.dart';
 import 'package:go_router/go_router.dart';
 
 /// Login Screen - Where users enter their username and password to sign in.
@@ -111,7 +112,7 @@ class _LoginState extends State<Login> {
                       // Welcome text
                       Center(
                         child: Text(
-                          "Welcome Back!",
+                          AppStrings.welcomeBack,
                           style: AppTextStyles.openSansBold24.copyWith(
                             color: AppColors.textPrimary,
                           ),
@@ -122,7 +123,7 @@ class _LoginState extends State<Login> {
                       // Subtitle
                       Center(
                         child: Text(
-                          "Sign in to continue",
+                          AppStrings.signInContinue,
                           style: AppTextStyles.openSansRegular16.copyWith(
                             color: AppColors.textSecondary,
                           ),
@@ -133,8 +134,8 @@ class _LoginState extends State<Login> {
                       // Username input field
                       CustomTextInput(
                         textEditingController: usernameTextController,
-                        hintText: "Enter your username",
-                        title: "USERNAME".tr, // .tr gets the translated text
+                        hintText: AppStrings.enterUsername,
+                        title: AppStrings.username, // .tr gets the translated text
                         svgIconPath: AssetPath.emailIcon,
                         inputType: TextInputType.text,
                         onChange: (value) {
@@ -151,8 +152,8 @@ class _LoginState extends State<Login> {
                       // Password input field
                       CustomTextInput(
                         textEditingController: passwordTextController,
-                        hintText: "Enter your password",
-                        title: "PASSWORD".tr,
+                        hintText: AppStrings.enterPassword,
+                        title: AppStrings.password,
                         svgIconPath: AssetPath.eyeOpenIcon,
                         isPassword: true, // This hides the text
                         onChange: (value) {
@@ -166,45 +167,15 @@ class _LoginState extends State<Login> {
                       const SizedBox(height: Dimens.standard_32),
 
                       // Login button
-                      SizedBox(
-                        width: double.infinity,
-                        height: Dimens.standard_56,
-                        child: ElevatedButton(
-                          // Disable button while loading
-                          onPressed: state.isLoading
-                              ? null
-                              : () {
-                                  // Validate and login
-                                  context.read<LoginCubit>().validate(
-                                    usernameTextController.text.trim(),
-                                    passwordTextController.text,
-                                  );
-                                },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.colorPrimary,
-                            foregroundColor: AppColors.colorWhite,
-                            elevation: Dimens.standard_0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(Dimens.standard_16),
-                            ),
-                          ),
-                          // Show loading spinner or "Login" text
-                          child: state.isLoading
-                              ? const SizedBox(
-                                  height: Dimens.standard_24,
-                                  width: Dimens.standard_24,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2.5,
-                                    color: AppColors.colorWhite,
-                                  ),
-                                )
-                              : Text(
-                                  "LOGIN".tr,
-                                  style: AppTextStyles.openSansBold16.copyWith(
-                                    color: AppColors.colorWhite,
-                                  ),
-                                ),
-                        ),
+                      PrimaryButton(
+                        text: AppStrings.login.toUpperCase(),
+                        onPressed: () {
+                          context.read<LoginCubit>().validate(
+                            usernameTextController.text.trim(),
+                            passwordTextController.text,
+                          );
+                        },
+                        isLoading: state.isLoading,
                       ),
                       const SizedBox(height: Dimens.standard_32),
 
@@ -230,7 +201,7 @@ class _LoginState extends State<Login> {
                                 ),
                                 const SizedBox(width: Dimens.standard_8),
                                 Text(
-                                  "Test Credentials",
+                                  AppStrings.testCredentials,
                                   style: AppTextStyles.openSansBold14.copyWith(
                                     color: AppColors.colorSecondary,
                                   ),
@@ -239,10 +210,10 @@ class _LoginState extends State<Login> {
                             ),
                             const SizedBox(height: Dimens.standard_8),
                             Text(
-                              "Username: emilys\nPassword: emilyspass",
+                              AppStrings.testUserCredentials,
                               style: AppTextStyles.openSansRegular14.copyWith(
                                 color: AppColors.textSecondary,
-                                height: 1.5,
+                                height: Dimens.standard_1_5,
                               ),
                             ),
                           ],

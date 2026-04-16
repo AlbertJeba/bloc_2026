@@ -1,5 +1,22 @@
+import 'dart:convert';
+
+Product productFromJson(String str) => Product.fromJson(json.decode(str));
+String productToJson(Product data) => json.encode(data.toJson());
+
 /// Product model matching DummyJSON product response
 class Product {
+  int? id;
+  String? title;
+  String? description;
+  String? category;
+  double? price;
+  double? discountPercentage;
+  double? rating;
+  int? stock;
+  String? brand;
+  String? thumbnail;
+  List<String>? images;
+
   Product({
     this.id,
     this.title,
@@ -29,18 +46,6 @@ class Product {
       images = List<String>.from(json['images']);
     }
   }
-
-  int? id;
-  String? title;
-  String? description;
-  String? category;
-  double? price;
-  double? discountPercentage;
-  double? rating;
-  int? stock;
-  String? brand;
-  String? thumbnail;
-  List<String>? images;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

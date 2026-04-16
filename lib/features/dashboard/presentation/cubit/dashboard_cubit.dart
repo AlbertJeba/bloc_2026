@@ -1,5 +1,6 @@
 import 'package:bloc_2026/core/network/model/either.dart';
 import 'package:bloc_2026/core/utils/error_logger.dart';
+import 'package:bloc_2026/features/dashboard/data/models/product_request.dart';
 import 'package:bloc_2026/features/dashboard/data/models/product.dart';
 import 'package:bloc_2026/features/dashboard/data/models/products_response.dart';
 import 'package:bloc_2026/features/dashboard/domain/use_case/get_products_usecase.dart';
@@ -42,8 +43,10 @@ class DashboardCubit extends Cubit<DashboardState> {
 
     // Call API to get products (skip 0 = start from beginning)
     Either result = await _getProductsUseCase(
-      limit: state.limit,
-      skip: 0,
+      request: ProductRequest(
+        limit: state.limit,
+        skip: 0,
+      ),
     );
 
     result.fold(
@@ -92,8 +95,10 @@ class DashboardCubit extends Cubit<DashboardState> {
     int skip = state.products?.length ?? 0;
 
     Either result = await _getProductsUseCase(
-      limit: state.limit,
-      skip: skip,
+      request: ProductRequest(
+        limit: state.limit,
+        skip: skip,
+      ),
     );
 
     result.fold(

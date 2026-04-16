@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'dart:io';
+import 'package:bloc_2026/core/constants/app_strings.dart';
 import 'package:bloc_2026/core/constants/routes.dart';
 import 'package:bloc_2026/core/database/hive_storage_service.dart';
 import 'package:bloc_2026/core/exceptions/http_exception.dart';
@@ -12,7 +13,6 @@ import 'package:bloc_2026/core/network/network_service.dart';
 import 'package:bloc_2026/core/utils/configuration.dart';
 import 'package:bloc_2026/routes/app_routes.dart';
 import 'package:dio/dio.dart';
-import 'package:get/get_utils/get_utils.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
@@ -72,7 +72,7 @@ mixin ExceptionHandlerMixin on NetworkService {
 
             return Left(
               AppException(
-                message: "SESSION_EXPIRY_MSG".tr,
+                message: AppStrings.sessionExpiryMsg,
                 statusCode: 401,
                 identifier: 'Unauthorized at $endpoint',
               ),
@@ -85,16 +85,16 @@ mixin ExceptionHandlerMixin on NetworkService {
               responseData.containsKey('message')) {
             message = responseData['message'];
           } else {
-            message = e.message ?? 'An error occurred';
+            message = e.message ?? AppStrings.errorOccurred;
           }
           statusCode = e.response?.statusCode ?? 0;
           identifier = 'DioException ${e.message} \nat $endpoint';
         } else if (e is SocketException) {
-          message = 'Unable to connect to the server.';
+          message = AppStrings.unableToConnect;
           statusCode = 0;
           identifier = 'Socket Exception ${e.message}\n at $endpoint';
         } else {
-          message = 'Unknown error occurred';
+          message = AppStrings.unknownError;
           statusCode = 0;
           identifier = 'Unknown error ${e.toString()}\n at $endpoint';
         }
@@ -113,7 +113,7 @@ mixin ExceptionHandlerMixin on NetworkService {
       log("No internet");
       return Left(
         AppException(
-          message: "NO_INTERNET_MSG".tr,
+          message: AppStrings.noInternetMsg,
           statusCode: 0,
           identifier: 'No Internet at $endpoint',
         ),

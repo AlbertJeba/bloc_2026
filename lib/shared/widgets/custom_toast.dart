@@ -1,7 +1,7 @@
+import 'package:bloc_2026/core/constants/app_strings.dart';
 import 'package:bloc_2026/shared/theme/app_colors.dart';
 import 'package:bloc_2026/shared/theme/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_utils/get_utils.dart';
 import 'package:toastification/toastification.dart';
 
 /// CustomToast - Reusable Toast Notification Utility
@@ -34,7 +34,7 @@ class CustomToast {
   static void showErrorToast(BuildContext context, String message) {
     toastification.show(
       context: context,
-      title: Text("ERROR".tr, style: AppTextStyles.openSansBold14),
+      title: Text(AppStrings.error, style: AppTextStyles.openSansBold14),
       description: Text(message, style: AppTextStyles.openSansRegular12),
       autoCloseDuration: const Duration(seconds: 3),
       type: ToastificationType.error,
@@ -51,7 +51,7 @@ class CustomToast {
   static void showSuccessToast(BuildContext context, String message) {
     toastification.show(
       context: context,
-      title: Text("SUCCESS".tr, style: AppTextStyles.openSansBold14),
+      title: Text(AppStrings.success, style: AppTextStyles.openSansBold14),
       description: Text(message, style: AppTextStyles.openSansRegular12),
       autoCloseDuration: const Duration(seconds: 3),
       type: ToastificationType.success,
@@ -68,7 +68,7 @@ class CustomToast {
   static void showInfoToast(BuildContext context, String message) {
     toastification.show(
       context: context,
-      title: Text("INFO".tr, style: AppTextStyles.openSansBold14),
+      title: Text(AppStrings.info, style: AppTextStyles.openSansBold14),
       description: Text(message, style: AppTextStyles.openSansRegular12),
       autoCloseDuration: const Duration(seconds: 3),
       type: ToastificationType.info,
@@ -86,7 +86,7 @@ class CustomToast {
   static void showWarningToast(BuildContext context, String message) {
     toastification.show(
       context: context,
-      title: Text("WARNING".tr, style: AppTextStyles.openSansBold14),
+      title: Text(AppStrings.warning, style: AppTextStyles.openSansBold14),
       description: Text(message, style: AppTextStyles.openSansRegular12),
       autoCloseDuration: const Duration(seconds: 3),
       type: ToastificationType.warning,

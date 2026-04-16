@@ -3,12 +3,12 @@ import 'package:bloc_2026/core/exceptions/http_exception.dart';
 import 'package:bloc_2026/core/network/model/either.dart';
 import 'package:bloc_2026/core/network/network_service.dart';
 import 'package:bloc_2026/core/utils/error_logger.dart';
+import 'package:bloc_2026/features/dashboard/data/models/product_request.dart';
 import 'package:bloc_2026/features/dashboard/data/models/products_response.dart';
 
 abstract class DashboardRemoteDataSource {
   Future<Either<AppException, ProductsResponse>> getProducts({
-    int limit = 10,
-    int skip = 0,
+    required ProductRequest request,
   });
 }
 
@@ -19,16 +19,12 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
 
   @override
   Future<Either<AppException, ProductsResponse>> getProducts({
-    int limit = 10,
-    int skip = 0,
+    required ProductRequest request,
   }) async {
     try {
       Either eitherType = await networkService.get(
         ApiEndpoint.products,
-        queryParameters: {
-          'limit': limit,
-          'skip': skip,
-        },
+        queryParameters: request.toJson(),
       );
       return eitherType.fold(
         (exception) {

@@ -1,12 +1,20 @@
 import 'dart:convert';
 
-LoginResponse loginResponseFromJson(String str) =>
-    LoginResponse.fromJson(json.decode(str));
+LoginResponse loginResponseFromJson(String str) => LoginResponse.fromJson(json.decode(str));
 String loginResponseToJson(LoginResponse data) => json.encode(data.toJson());
 
 /// DummyJSON login response format
-/// Returns user data with accessToken and refreshToken directly
 class LoginResponse {
+  int? id;
+  String? username;
+  String? email;
+  String? firstName;
+  String? lastName;
+  String? gender;
+  String? image;
+  String? accessToken;
+  String? refreshToken;
+
   LoginResponse({
     this.id,
     this.username,
@@ -30,16 +38,6 @@ class LoginResponse {
     accessToken = json['accessToken'];
     refreshToken = json['refreshToken'];
   }
-
-  int? id;
-  String? username;
-  String? email;
-  String? firstName;
-  String? lastName;
-  String? gender;
-  String? image;
-  String? accessToken;
-  String? refreshToken;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

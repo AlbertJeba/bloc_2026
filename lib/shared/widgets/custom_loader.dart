@@ -4,29 +4,47 @@ import 'package:flutter/material.dart';
 
 /// CustomLoader - Reusable Loading Indicator Widget
 /// 
-/// A centered, themed circular progress indicator used throughout
-/// the app to indicate loading states.
+/// A flexible themed progress indicator used throughout the app.
 /// 
 /// Features:
-/// - Uses adaptive styling (Material on Android, Cupertino on iOS)
-/// - Themed with [AppColors.colorPrimary]
-/// - Consistent stroke width using [Dimens]
+/// - Supports adaptive styling (Material/Cupertino)
+/// - Customizable size, color, and stroke width
+/// - Centered by default
 /// 
 /// Usage:
 /// ```dart
-/// if (isLoading) const CustomLoader()
+/// const CustomLoader() // Default center primary loader
+/// const CustomLoader(color: Colors.white, size: 24) // Small white loader for buttons
 /// ```
 class CustomLoader extends StatelessWidget {
+  final Color? color;
+  final double? size;
+  final double strokeWidth;
+  final bool isCentered;
+
   /// Creates a custom loader widget.
-  const CustomLoader({super.key});
+  const CustomLoader({
+    super.key,
+    this.color,
+    this.size,
+    this.strokeWidth = Dimens.standard_4,
+    this.isCentered = true,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    Widget loader = SizedBox(
+      width: size,
+      height: size,
       child: CircularProgressIndicator.adaptive(
-        strokeWidth: Dimens.standard_4,
-        valueColor: AlwaysStoppedAnimation(AppColors.colorPrimary),
+        strokeWidth: strokeWidth,
+        valueColor: AlwaysStoppedAnimation(color ?? AppColors.colorPrimary),
       ),
     );
+
+    if (isCentered) {
+      return Center(child: loader);
+    }
+    return loader;
   }
 }

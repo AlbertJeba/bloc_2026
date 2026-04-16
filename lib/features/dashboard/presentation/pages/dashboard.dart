@@ -1,4 +1,5 @@
 import 'package:bloc_2026/core/dependency_injection/injector.dart';
+import 'package:bloc_2026/core/constants/app_strings.dart';
 import 'package:bloc_2026/core/network/logout_service_function.dart';
 import 'package:bloc_2026/core/utils/configuration.dart';
 import 'package:bloc_2026/features/dashboard/data/models/product.dart';
@@ -8,9 +9,10 @@ import 'package:bloc_2026/features/dashboard/presentation/cubit/dashboard_state.
 import 'package:bloc_2026/shared/config/dimens.dart';
 import 'package:bloc_2026/shared/theme/app_colors.dart';
 import 'package:bloc_2026/shared/theme/text_styles.dart';
+import 'package:bloc_2026/shared/widgets/custom_loader.dart';
+import 'package:bloc_2026/shared/widgets/custom_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get_utils/get_utils.dart';
 import 'package:go_router/go_router.dart';
 
 /// Dashboard Screen - The main screen after login.
@@ -103,11 +105,7 @@ class _DashboardState extends State<Dashboard> {
                     // Show loading spinner when first loading
                     if (state.isLoading &&
                         (state.products == null || state.products!.isEmpty)) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.colorPrimary,
-                        ),
-                      );
+                      return const CustomLoader();
                     }
 
                     // Show error message if loading failed
@@ -138,7 +136,7 @@ class _DashboardState extends State<Dashboard> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      "PRODUCTS".tr,
+                                      AppStrings.products.toUpperCase(),
                                       style: AppTextStyles.openSansBold20
                                           .copyWith(
                                             color: AppColors.textPrimary,
@@ -165,7 +163,7 @@ class _DashboardState extends State<Dashboard> {
                                 gridDelegate:
                                     const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 2, // 2 columns
-                                      childAspectRatio: 0.68, // Card height/width ratio - Keeping hardcoded as exact ratio might not be in Dimens or is specific design choice
+                                      childAspectRatio: Dimens.decimal_68, // Card height/width ratio
                                       crossAxisSpacing: Dimens.standard_12,
                                       mainAxisSpacing: Dimens.standard_12,
                                     ),
@@ -185,11 +183,8 @@ class _DashboardState extends State<Dashboard> {
                               const SliverToBoxAdapter(
                                 child: Padding(
                                   padding: EdgeInsets.all(Dimens.standard_20),
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      color: AppColors.colorPrimary,
-                                      strokeWidth: Dimens.standard_2,
-                                    ),
+                                  child: CustomLoader(
+                                    strokeWidth: Dimens.standard_2,
                                   ),
                                 ),
                               ),
@@ -240,7 +235,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             child: Center(
               child: Text(
-                (user?.firstName ?? user?.username ?? 'U')
+                (user?.firstName ?? user?.username ?? AppStrings.userInitial)
                     .toString()
                     .substring(0, 1)
                     .toUpperCase(),
@@ -258,14 +253,14 @@ class _DashboardState extends State<Dashboard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${"WELCOME".tr}! 👋",
+                  "${AppStrings.welcome}! 👋",
                   style: AppTextStyles.openSansRegular12.copyWith(
                     color: AppColors.textSecondary,
                   ),
                 ),
                 Text(
-                  user?.firstName ?? user?.username ?? 'User',
-                  style: AppTextStyles.openSansBold18.copyWith(
+                  user?.firstName ?? user?.username ?? AppStrings.user,
+                  style: AppTextStyles.openSansBold14.copyWith(
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -317,26 +312,13 @@ class _DashboardState extends State<Dashboard> {
             child: Stack(
               children: [
                 // Product image
-                ClipRRect(
+                CustomNetworkImage(
+                  imageUrl: product.thumbnail ?? '',
+                  width: double.infinity,
+                  fit: BoxFit.cover,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(Dimens.standard_16),
                     topRight: Radius.circular(Dimens.standard_16),
-                  ),
-                  child: Image.network(
-                    product.thumbnail ?? '',
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      // Show placeholder if image fails to load
-                      return Container(
-                        color: AppColors.inputBackground,
-                        child: const Icon(
-                          Icons.image_not_supported_outlined,
-                          size: Dimens.standard_40,
-                          color: AppColors.textLight,
-                        ),
-                      );
-                    },
                   ),
                 ),
 
@@ -463,7 +445,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             const SizedBox(height: Dimens.standard_24),
             Text(
-              "Oops! Something went wrong",
+              AppStrings.errorSomethingWrong,
               style: AppTextStyles.openSansBold18.copyWith(
                 color: AppColors.textPrimary,
               ),
@@ -480,7 +462,7 @@ class _DashboardState extends State<Dashboard> {
             ElevatedButton.icon(
               onPressed: () => _dashboardCubit.refresh(),
               icon: const Icon(Icons.refresh_rounded),
-              label: Text("RETRY".tr),
+              label: Text(AppStrings.retry.toUpperCase()),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.colorPrimary,
                 foregroundColor: AppColors.colorWhite,
@@ -505,12 +487,12 @@ class _DashboardState extends State<Dashboard> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimens.standard_16)),
-        title: Text("LOGOUT".tr, style: AppTextStyles.openSansBold18),
+        title: Text(AppStrings.logout.toUpperCase(), style: AppTextStyles.openSansBold18),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Are you sure you want to logout?",
+              AppStrings.logoutConfirm,
               style: AppTextStyles.openSansRegular14,
             ),
             const SizedBox(height: Dimens.standard_24),
@@ -531,7 +513,7 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       ),
                       child: Text(
-                        "Cancel",
+                        AppStrings.cancel,
                         style: AppTextStyles.openSansBold14.copyWith(
                           color: AppColors.textPrimary,
                         ),
@@ -559,7 +541,7 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       ),
                       child: Text(
-                        "LOGOUT".tr,
+                        AppStrings.logout.toUpperCase(),
                         style: AppTextStyles.openSansBold14.copyWith(
                           color: AppColors.colorWhite,
                         ),

@@ -1,6 +1,7 @@
-import 'package:flutter/foundation.dart';
+import 'package:bloc_2026/core/constants/app_strings.dart';
 import 'package:bloc_2026/core/exceptions/http_exception.dart';
 import 'package:bloc_2026/core/network/model/either.dart';
+import 'package:flutter/foundation.dart';
 
 /// ErrorLogger
 ///
@@ -36,7 +37,7 @@ class ErrorLogger {
     // 2. Return standard error object (Left)
     return Left(
       AppException(
-        message: customMessage ?? 'Unknown error occurred',
+        message: customMessage ?? AppStrings.unknownError,
         statusCode: 1,
         identifier: '${exception.toString()}\n$identifier',
       ),

@@ -1,3 +1,4 @@
+import 'package:bloc_2026/core/constants/app_strings.dart';
 import 'package:bloc_2026/core/constants/constant.dart';
 import 'package:bloc_2026/core/database/hive_storage_service.dart';
 import 'package:bloc_2026/core/network/model/either.dart';
@@ -9,7 +10,6 @@ import 'package:bloc_2026/features/login/data/models/login_response.dart';
 import 'package:bloc_2026/features/login/domain/use_case/login_usecase.dart';
 import 'package:bloc_2026/shared/models/user_data.dart';
 import 'package:bloc/bloc.dart';
-import 'package:get/get_utils/get_utils.dart';
 import 'package:get_it/get_it.dart';
 import 'login_state.dart';
 
@@ -51,11 +51,11 @@ class LoginCubit extends Cubit<LoginState> {
     String passwordError = '';
 
     if (username.isEmpty) {
-      usernameError = "USERNAME_VALIDATION_TEXT".tr;
+      usernameError = AppStrings.usernameValidation;
     }
 
     if (password.isEmpty) {
-      passwordError = "PASSWORD_VALIDATION_TEXT".tr;
+      passwordError = AppStrings.passwordValidation;
     }
 
     if (usernameError.isNotEmpty || passwordError.isNotEmpty) {
@@ -145,7 +145,7 @@ class LoginCubit extends Cubit<LoginState> {
   void validateUsername(String value) {
     String error = '';
     if (value.isEmpty) {
-      error = "USERNAME_VALIDATION_TEXT".tr;
+      error = AppStrings.usernameValidation;
     }
     emit(state.copyWith(usernameError: error));
   }
@@ -154,7 +154,7 @@ class LoginCubit extends Cubit<LoginState> {
   void validatePassword(String value) {
     String error = '';
     if (value.isEmpty) {
-      error = "PASSWORD_VALIDATION_TEXT".tr;
+      error = AppStrings.passwordValidation;
     }
     emit(state.copyWith(passwordError: error));
   }

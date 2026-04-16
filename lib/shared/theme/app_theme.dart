@@ -1,3 +1,4 @@
+import 'package:bloc_2026/shared/config/dimens.dart';
 import 'package:bloc_2026/shared/theme/app_colors.dart';
 import 'package:bloc_2026/shared/theme/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +45,7 @@ class AppTheme {
 
       // AppBar Theme
       appBarTheme: AppBarTheme(
-        elevation: 0,
+        elevation: Dimens.standard_0,
         centerTitle: true,
         backgroundColor: AppColors.colorPrimary,
         foregroundColor: AppColors.colorWhite,
@@ -88,13 +89,13 @@ class AppTheme {
       // Elevated Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          elevation: 0,
+          elevation: Dimens.standard_0,
           backgroundColor: AppColors.colorPrimary,
           foregroundColor: AppColors.colorWhite,
-          minimumSize: const Size(double.infinity, 52),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          minimumSize: const Size(double.infinity, Dimens.standard_52),
+          padding: const EdgeInsets.symmetric(horizontal: Dimens.standard_24, vertical: Dimens.standard_14),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(Dimens.standard_12),
           ),
           textStyle: AppTextStyles.openSansBold16,
         ),
@@ -104,11 +105,11 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.colorPrimary,
-          minimumSize: const Size(double.infinity, 52),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          side: const BorderSide(color: AppColors.colorPrimary, width: 1.5),
+          minimumSize: const Size(double.infinity, Dimens.standard_52),
+          padding: const EdgeInsets.symmetric(horizontal: Dimens.standard_24, vertical: Dimens.standard_14),
+          side: const BorderSide(color: AppColors.colorPrimary, width: Dimens.standard_1_5),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(Dimens.standard_12),
           ),
           textStyle: AppTextStyles.openSansBold16,
         ),
@@ -126,26 +127,26 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.inputBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: Dimens.standard_16, vertical: Dimens.standard_16),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(Dimens.standard_12),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.inputBorder, width: 1),
+          borderRadius: BorderRadius.circular(Dimens.standard_12),
+          borderSide: const BorderSide(color: AppColors.inputBorder, width: Dimens.standard_1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.inputFocusBorder, width: 2),
+          borderRadius: BorderRadius.circular(Dimens.standard_12),
+          borderSide: const BorderSide(color: AppColors.inputFocusBorder, width: Dimens.standard_2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.colorRed, width: 1),
+          borderRadius: BorderRadius.circular(Dimens.standard_12),
+          borderSide: const BorderSide(color: AppColors.colorRed, width: Dimens.standard_1),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.colorRed, width: 2),
+          borderRadius: BorderRadius.circular(Dimens.standard_12),
+          borderSide: const BorderSide(color: AppColors.colorRed, width: Dimens.standard_2),
         ),
         hintStyle: AppTextStyles.openSansRegular14.copyWith(
           color: AppColors.textLight,
@@ -157,10 +158,10 @@ class AppTheme {
 
       // Card Theme
       cardTheme: const CardThemeData(
-        elevation: 2,
+        elevation: Dimens.standard_2,
         shadowColor: AppColors.shadowColor,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
+          borderRadius: BorderRadius.all(Radius.circular(Dimens.standard_16)),
         ),
         color: AppColors.cardBackground,
       ),
@@ -168,14 +169,14 @@ class AppTheme {
       // Divider Theme
       dividerTheme: const DividerThemeData(
         color: AppColors.dividerColor,
-        thickness: 1,
-        space: 1,
+        thickness: Dimens.standard_1,
+        space: Dimens.standard_1,
       ),
 
       // Icon Theme
       iconTheme: const IconThemeData(
         color: AppColors.textSecondary,
-        size: 24,
+        size: Dimens.standard_24,
       ),
 
       // Progress Indicator Theme
@@ -190,7 +191,7 @@ class AppTheme {
           color: AppColors.colorWhite,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(Dimens.standard_8),
         ),
         behavior: SnackBarBehavior.floating,
       ),
@@ -201,14 +202,14 @@ class AppTheme {
         selectedItemColor: AppColors.colorPrimary,
         unselectedItemColor: AppColors.textLight,
         type: BottomNavigationBarType.fixed,
-        elevation: 8,
+        elevation: Dimens.standard_8,
       ),
 
       // Floating Action Button Theme
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.colorPrimary,
         foregroundColor: AppColors.colorWhite,
-        elevation: 4,
+        elevation: Dimens.standard_4,
       ),
     );
   }

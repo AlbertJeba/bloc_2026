@@ -1,5 +1,20 @@
+import 'dart:convert';
+
+UserData userDataFromJson(String str) => UserData.fromJson(json.decode(str));
+String userDataToJson(UserData data) => json.encode(data.toJson());
+
 /// User data model matching DummyJSON user response
 class UserData {
+  String? username;
+  int? id;
+  String? email;
+  String? firstName;
+  String? lastName;
+  String? gender;
+  String? image;
+  String? accessToken;
+  String? refreshToken;
+
   UserData({
     this.id,
     this.username,
@@ -23,16 +38,6 @@ class UserData {
     accessToken = json['accessToken'];
     refreshToken = json['refreshToken'];
   }
-
-  int? id;
-  String? username;
-  String? email;
-  String? firstName;
-  String? lastName;
-  String? gender;
-  String? image;
-  String? accessToken;
-  String? refreshToken;
 
   /// Alias for accessToken for backward compatibility
   String? get token => accessToken;

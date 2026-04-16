@@ -1,3 +1,4 @@
+import 'package:bloc_2026/core/constants/app_strings.dart';
 import 'package:bloc_2026/core/constants/asset_path.dart';
 import 'package:bloc_2026/shared/config/dimens.dart';
 import 'package:bloc_2026/core/constants/constant.dart';
@@ -6,6 +7,7 @@ import 'package:bloc_2026/core/database/hive_storage_service.dart';
 import 'package:bloc_2026/core/network/network_service.dart';
 import 'package:bloc_2026/shared/theme/app_colors.dart';
 import 'package:bloc_2026/shared/theme/text_styles.dart';
+import 'package:bloc_2026/shared/widgets/custom_loader.dart';
 import 'package:bloc_2026/shared/widgets/svg_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -165,7 +167,7 @@ class _SplashScreenState extends State<SplashScreen>
 
                         // App name text
                         Text(
-                          "BLOC 2026",
+                          AppStrings.appName,
                           style: AppTextStyles.openSansBold32.copyWith(
                             color: AppColors.colorWhite,
                             letterSpacing: Dimens.standard_2,
@@ -175,7 +177,7 @@ class _SplashScreenState extends State<SplashScreen>
 
                         // Tagline text
                         Text(
-                          "Learn Clean Architecture",
+                          AppStrings.appSubtitle,
                           style: AppTextStyles.openSansRegular14.copyWith(
                             color: AppColors.colorWhite.withValues(
                               alpha: Dimens.decimal_8,
@@ -186,16 +188,12 @@ class _SplashScreenState extends State<SplashScreen>
                         const SizedBox(height: Dimens.standard_60),
 
                         // Loading spinner to show something is happening
-                        SizedBox(
-                          width: Dimens.standard_24,
-                          height: Dimens.standard_24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.colorWhite.withValues(
-                                alpha: Dimens.decimal_8,
-                              ),
-                            ),
+                        CustomLoader(
+                          size: Dimens.standard_24,
+                          strokeWidth: Dimens.standard_2_5,
+                          isCentered: false,
+                          color: AppColors.colorWhite.withValues(
+                            alpha: Dimens.decimal_8,
                           ),
                         ),
                       ],

@@ -46,6 +46,10 @@ class AppColors {
   static const Color inputBorder = Color(0xFFE2E8F0);
   static const Color inputFocusBorder = Color(0xFF2563EB);
 
+  // Button colors
+  static const Color buttonDisabledColor = Color(0xFFCBD5E1);
+  static const Color buttonGradientStart = Color(0xFF3B82F6);
+
   // Legacy color mappings for backward compatibility
   static const Color color858485 = Color(0xFF64748B);
   static const Color colorD9D9D9 = Color(0xFFE2E8F0);
