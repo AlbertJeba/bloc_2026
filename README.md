@@ -175,8 +175,8 @@ Every data model must follow this exact order:
 - **ALWAYS** create a Request Model (e.g., `ProductRequest`) and pass the entire object.
 
 ### 3. UI Values
-- **Dimensions**: Use `Dimens.dart` for all spacing, padding, and radii.
-- **Strings**: Use `AppStrings.dart` (localized via `en.json`).
+- **Dimensions**: Use `Dimens.xxx` for all spacing, padding, and radii.
+- **Strings**: Use `AppStrings.xxx` (localized via `en.json`).
 - **Loader**: Use `CustomLoader()` for all progress indicators.
 
 ---
