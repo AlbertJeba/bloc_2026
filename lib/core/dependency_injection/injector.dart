@@ -31,7 +31,6 @@ Future<void> init() async {
     /// --- Core Services ---
     // Network Service (handles API calls)
     ..registerLazySingleton<NetworkService>(DioNetworkService.new)
-    ..registerLazySingleton<DioNetworkService>(DioNetworkService.new)
     // Hive Service (handles Local DB)
     ..registerLazySingleton<HiveService>(HiveService.new)
 
